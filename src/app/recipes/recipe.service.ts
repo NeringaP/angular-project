@@ -12,7 +12,7 @@ export class RecipeService {
           1,
           'Apple pie',
           'A tasty heartwarming pie.',
-          'https://i.pinimg.com/originals/05/ba/17/05ba178b4f2d2380d1290385fd772f2e.jpg',
+          '../../assets/images/applePie.jpg',
           [
             new Ingredient('Apple', 5),
             new Ingredient('Flour', 1),
@@ -25,7 +25,7 @@ export class RecipeService {
           2,
           'Pumkin pie',
           'A smooth and spicy pie.',
-          'https://i0.wp.com/blessedbeyondcrazy.com/wp-content/uploads/2017/08/46933990_m.jpg?fit=565%2C848',
+          '../../assets/images/pumpkinPie.webp',
           [
             new Ingredient('Pumpkin', 1),
             new Ingredient('Flour', 1),
@@ -38,7 +38,7 @@ export class RecipeService {
           3,
           'Cherry pie',
           'This classic cherry pie will be your favorite!',
-          'https://images.pexels.com/photos/2361503/pexels-photo-2361503.jpeg',
+          '../../assets/images/cherryPie.jpeg',
           [
             new Ingredient('Cherries ', 20),
             new Ingredient('Flour', 1),
@@ -53,7 +53,7 @@ export class RecipeService {
           4,
           'Lemon meringue pie',
           'This is the perfect lemon meringue pie!',
-          'https://images.pexels.com/photos/12884567/pexels-photo-12884567.jpeg',
+          '../../assets/images/lemonMeringuePie.jpeg',
           [
             new Ingredient('Egg ', 5),
             new Ingredient('Cornstarch', 1),
