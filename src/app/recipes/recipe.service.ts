@@ -6,10 +6,10 @@ import { Subject } from "rxjs";
 
 @Injectable()
 export class RecipeService {
+  recipesChanged = new Subject<Recipe[]>();
     
     private recipes: Recipe[] = [
         new Recipe(
-          1,
           'Apple pie',
           'A tasty heartwarming pie.',
           '../../assets/images/applePie.jpg',
@@ -22,7 +22,6 @@ export class RecipeService {
           ]
         ),
         new Recipe(
-          2,
           'Pumkin pie',
           'A smooth and spicy pie.',
           '../../assets/images/pumpkinPie.webp',
@@ -35,7 +34,6 @@ export class RecipeService {
           ]
         ),
         new Recipe(
-          3,
           'Cherry pie',
           'This classic cherry pie will be your favorite!',
           '../../assets/images/cherryPie.jpeg',
@@ -50,7 +48,6 @@ export class RecipeService {
           ]
         ),
         new Recipe(
-          4,
           'Lemon meringue pie',
           'This is the perfect lemon meringue pie!',
           '../../assets/images/lemonMeringuePie.jpeg',
@@ -72,16 +69,30 @@ export class RecipeService {
         return this.recipes.slice(); //slice to get a COPY of the recipes array
     }
 
-    getRecipe(id: number) {
-      const recipe = this.recipes.find(
-        (r) => {
-          return r.id === id;
-        }
-      );
-      return recipe;
+    getRecipe(index: number): Recipe {
+      return this.recipes[index];
     }
 
     addIngredientsToShoppingList(ingredients: Ingredient[]) {
             this.shoppingListService.addIngredients(ingredients);
+    }
+
+    addRecipe(recipe: Recipe) {
+      this.recipes.push(recipe);
+      this.informOnChanges();
+    }
+
+    updateRecipe(index: number, newRecipe: Recipe) {
+      this.recipes[index] = newRecipe;
+      this.informOnChanges();
+    }
+
+    deleteRecipe(index: number) {
+      this.recipes.splice(index, 1);
+      this.informOnChanges();
+    }
+
+    informOnChanges() {
+      this.recipesChanged.next(this.getRecipes());
     }
 }
