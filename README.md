@@ -1,6 +1,7 @@
 # RecipeShoppingProject
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
+Application is available at https://angular-recipe-book-f8bcc.web.app
 
 ## Development server
 
