@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { Ingredient } from "src/app/shared/ingredient.model";
-import { addIngredient } from "./shopping-list.actions";
+import { addIngredient, addIngredients } from "./shopping-list.actions";
 
 const initialState = {
     ingredients: [
@@ -14,5 +14,9 @@ export const shoppingListReducer = createReducer(
     on(addIngredient, (state, action) => ({
         ...state,
         ingredients: [...state.ingredients, action.ingredient]
+    })),
+    on(addIngredients, (state, action) => ({
+        ...state,
+        ingredients: [...state.ingredients, ...action.ingredients]
     })),
 );

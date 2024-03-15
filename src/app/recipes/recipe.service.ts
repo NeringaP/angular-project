@@ -63,7 +63,7 @@ export class RecipeService {
     //     ),
     // ];
 
-    constructor(private shoppingListService: ShoppingListService) {}
+    constructor() {}
 
     getRecipes(): Recipe[] {
         return this.recipes.slice(); //slice to get a COPY of the recipes array
@@ -73,9 +73,9 @@ export class RecipeService {
       return this.recipes[index];
     }
 
-    addIngredientsToShoppingList(ingredients: Ingredient[]) {
-            this.shoppingListService.addIngredients(ingredients);
-    }
+    // addIngredientsToShoppingList(ingredients: Ingredient[]) {
+    //         this.shoppingListService.addIngredients(ingredients);
+    // }
 
     addRecipe(recipe: Recipe) {
       this.recipes.push(recipe);
