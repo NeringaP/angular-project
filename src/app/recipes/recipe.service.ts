@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Recipe } from "./recipe.model";
 import { Ingredient } from "../shared/ingredient.model";
-import { ShoppingListService } from "../shopping/shopping-list/shopping-list.service";
 import { Subject } from "rxjs";
 
 @Injectable()
@@ -72,10 +71,6 @@ export class RecipeService {
     getRecipe(index: number): Recipe {
       return this.recipes[index];
     }
-
-    // addIngredientsToShoppingList(ingredients: Ingredient[]) {
-    //         this.shoppingListService.addIngredients(ingredients);
-    // }
 
     addRecipe(recipe: Recipe) {
       this.recipes.push(recipe);
