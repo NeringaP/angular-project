@@ -1,14 +1,17 @@
 import { createReducer, on } from "@ngrx/store";
 import { User } from "../user.model";
-import { login, logout } from "./auth.actions";
-import { state } from "@angular/animations";
+import { login, loginFail, loginStart, logout } from "./auth.actions";
 
 export interface State {
     user: User;
+    authError: string;
+    loading: boolean;
 }
 
 const initialState: State = {
-    user: null
+    user: null,
+    authError: null,
+    loading: false
 }
 
 export const authReducer = createReducer(
@@ -22,11 +25,24 @@ export const authReducer = createReducer(
         );
         return {
             ...state,
-            user: user
+            user: user,
+            authError: null,
+            loading: false
         };
     }),
-    on(logout, (state, action) => ({
+    on(logout, (state) => ({
         ...state,
         user: null
+    })),
+    on(loginStart, (state) => ({
+        ...state,
+        authError: null,
+        loading: true
+    })),
+    on(loginFail, (state, action) => ({
+        ...state,
+        user: null,
+        authError: action.message,
+        loading: false
     }))
 )
