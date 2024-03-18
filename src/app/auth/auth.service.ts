@@ -8,6 +8,7 @@ import { Store } from "@ngrx/store";
 import { User } from "./user.model";
 import { environment } from "src/environments/environment";
 import * as fromApp from "../store/app.reducer"
+import * as fromAuthActions from "./store/auth.actions";
 
 export interface AuthResponseData {
     idToken: string;
@@ -20,7 +21,7 @@ export interface AuthResponseData {
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-    user = new BehaviorSubject<User>(null);
+    // user = new BehaviorSubject<User>(null);
     private tokenExpirationTimer: any;
 
     constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {}
@@ -86,14 +87,23 @@ export class AuthService {
         );
 
         if(loadedUser.token) {
-            this.user.next(loadedUser);
+            // this.user.next(loadedUser);
+            this.store.dispatch(fromAuthActions.login({
+                user: {
+                    email: loadedUser.email,
+                     id: loadedUser.id, 
+                     token: loadedUser.token, 
+                     expirationDate: new Date(userData._tokenExpirationDate)
+                    }
+            }));
             const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
             this.autoLogout(expirationDuration);
         }
     }
 
     logout() {
-        this.user.next(null);
+        // this.user.next(null);
+        this.store.dispatch(fromAuthActions.logout());
         this.router.navigate(['/auth']);
         localStorage.removeItem('userData');
         if(this.tokenExpirationTimer) {
@@ -118,7 +128,12 @@ export class AuthService {
             token,
             expirationDate
         );
-        this.user.next(user);
+        // this.user.next(user);
+        this.store.dispatch(
+            fromAuthActions.login(
+                {user: {email: email, id: id, token: token, expirationDate: expirationDate}}
+            )
+        )
         this.autoLogout(+expiresIn * 1000);
         localStorage.setItem('userData', JSON.stringify(user));
     }

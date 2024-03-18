@@ -14,14 +14,11 @@ const initialState: State = {
 export const authReducer = createReducer(
     initialState,
     on(login, (state, action) => {
-        const expirationDate = new Date(
-            new Date().getTime() + +action.user.expiresIn * 1000
-        );
         const user = new User(
             action.user.email,
             action.user.id,
             action.user.token,
-            expirationDate
+            action.user.expirationDate
         );
         return {
             ...state,
