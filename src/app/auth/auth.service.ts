@@ -1,10 +1,13 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { BehaviorSubject, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
+import { Store } from "@ngrx/store";
+
 import { User } from "./user.model";
-import { Router } from "@angular/router";
 import { environment } from "src/environments/environment";
+import * as fromApp from "../store/app.reducer"
 
 export interface AuthResponseData {
     idToken: string;
@@ -20,7 +23,7 @@ export class AuthService {
     user = new BehaviorSubject<User>(null);
     private tokenExpirationTimer: any;
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {}
 
     signup(userEmail: string, userPassword: string) {
         return this.http.post<AuthResponseData>(
