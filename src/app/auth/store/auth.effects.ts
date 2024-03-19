@@ -7,6 +7,8 @@ import * as fromAuthActions from "./auth.actions";
 import { environment } from "src/environments/environment";
 import { of, throwError } from "rxjs";
 import { Router } from "@angular/router";
+import { User } from "../user.model";
+import { AuthService } from "../auth.service";
 
 export interface AuthResponseData {
     idToken: string;
@@ -19,6 +21,8 @@ export interface AuthResponseData {
 
 const handleAuthentication = (email: string, id: string, token: string, expiresIn: number) => {
     const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
+    const user = new User(email, id, token, expirationDate);
+    localStorage.setItem('userData', JSON.stringify(user));
     return fromAuthActions.authenticateSuccess({
             user: {
                 email: email, 
@@ -48,7 +52,12 @@ const handleError = (errorResponse) => {
 
 @Injectable()
 export class AuthEffects {
-    constructor(private actions$: Actions, private http: HttpClient, private router: Router) {}
+    constructor(
+        private actions$: Actions, 
+        private http: HttpClient, 
+        private router: Router,
+        private authService: AuthService
+    ) {}
     
     authSignup = createEffect(
         () => 
@@ -63,6 +72,9 @@ export class AuthEffects {
                             returnSecureToken: true
                         }
                     ).pipe(
+                        tap((responseData) => {
+                            this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+                        }),
                         map(responseData => {
                             return handleAuthentication(responseData.email, responseData.idToken, responseData.idToken, +responseData.expiresIn);
                         }),
@@ -88,6 +100,9 @@ export class AuthEffects {
                             returnSecureToken: true
                         }
                     ).pipe(
+                        tap((responseData) => {
+                            this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+                        }),
                         map(responseData => {
                             return handleAuthentication(responseData.email, responseData.idToken, responseData.idToken, +responseData.expiresIn);
                         }),
@@ -99,16 +114,66 @@ export class AuthEffects {
             )
     );
 
+    autoLogin = createEffect(() =>
+        this.actions$.pipe(
+            ofType(fromAuthActions.autoLogin),
+            map(() => {
+                const userData: {
+                    email: string, 
+                    id: string, 
+                    _token: string, 
+                    _tokenExpirationDate: string
+                } = JSON.parse(localStorage.getItem('userData'));
+                if(!userData) {
+                    return {type: 'Dummy'};
+                }
+        
+                const loadedUser = new User(
+                    userData.email, 
+                    userData.id, 
+                    userData._token, 
+                    new Date(userData._tokenExpirationDate)
+                );
+        
+                if(loadedUser.token) {
+                    const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+                    this.authService.setLogoutTimer(expirationDuration);
+                    return fromAuthActions.authenticateSuccess({
+                        user: {
+                            email: loadedUser.email,
+                             id: loadedUser.id, 
+                             token: loadedUser.token, 
+                             expirationDate: new Date(userData._tokenExpirationDate)
+                            }
+                    });
+                }
+                return {type: 'Dummy'};
+            })
+        )
+    );
+
+    authLogout = createEffect(() => 
+        this.actions$.pipe(
+            ofType(fromAuthActions.logout),
+            tap(() => {
+                localStorage.removeItem('userData');
+                this.authService.clearLogoutTimer();
+                this.router.navigate(['/auth']);
+            })
+        ),
+        {dispatch: false}  
+    );
+
     authRedirect = createEffect(
         () => 
             this.actions$.pipe(
-                ofType(fromAuthActions.authenticateSuccess, fromAuthActions.logout),
+                ofType(fromAuthActions.authenticateSuccess),
                 tap(() => {
-                    this.router.navigate(['/']);
+                    this.router.navigate(['/recipes']);
                 })
             ),
             {dispatch: false}
-    )
+    );
 
 
     

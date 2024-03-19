@@ -20,6 +20,10 @@ export const signupStart = createAction(
     props<{credentials: {email: string, password: string}}>()
 );
 
+export const autoLogin = createAction(
+    '[Auth] Auto Login'
+);
+
 export const logout = createAction(
     '[Auth] Logout'
 );
