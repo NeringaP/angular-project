@@ -5,16 +5,25 @@ export const loginStart = createAction(
     props<{credentials: {email: string, password: string}}>()
 );
 
-export const login = createAction(
-    '[Auth] Login',
+export const authenticateSuccess = createAction(
+    '[Auth] Authenticate Success',
     props<{user: {email: string, id: string, token: string, expirationDate: Date}}>()
 );
 
-export const loginFail = createAction(
-    '[Auth] Login Fail',
+export const authenticateFail = createAction(
+    '[Auth] Authenticate Fail',
     props<{message: string}>()
+);
+
+export const signupStart = createAction(
+    '[Auth] Signup Start',
+    props<{credentials: {email: string, password: string}}>()
 );
 
 export const logout = createAction(
     '[Auth] Logout'
+);
+
+export const clearError = createAction(
+    '[Auth] Clear Error'
 );

@@ -26,47 +26,47 @@ export class AuthService {
 
     constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {}
 
-    signup(userEmail: string, userPassword: string) {
-        return this.http.post<AuthResponseData>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey,
-            {
-                email: userEmail,
-                password: userPassword,
-                returnSecureToken: true
-            }
-        ).pipe(
-            catchError(this.handleError),
-            tap(responseData => {
-                this.handleAuthentication(
-                    responseData.email,
-                    responseData.localId,
-                    responseData.idToken,
-                    responseData.expiresIn
-                );
-            })
-        );
-    }
+    // signup(userEmail: string, userPassword: string) {
+    //     return this.http.post<AuthResponseData>(
+    //         'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.firebaseAPIKey,
+    //         {
+    //             email: userEmail,
+    //             password: userPassword,
+    //             returnSecureToken: true
+    //         }
+    //     ).pipe(
+    //         catchError(this.handleError),
+    //         tap(responseData => {
+    //             this.handleAuthentication(
+    //                 responseData.email,
+    //                 responseData.localId,
+    //                 responseData.idToken,
+    //                 responseData.expiresIn
+    //             );
+    //         })
+    //     );
+    // }
 
-    login(userEmail: string, userPassword: string) {
-        return this.http.post<AuthResponseData>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey,
-            {
-                email: userEmail,
-                password: userPassword,
-                returnSecureToken: true
-            }
-        ).pipe(
-            catchError(this.handleError),
-            tap(responseData => {
-                this.handleAuthentication(
-                    responseData.email,
-                    responseData.localId,
-                    responseData.idToken,
-                    responseData.expiresIn
-                );
-            })
-        );
-    }
+    // login(userEmail: string, userPassword: string) {
+    //     return this.http.post<AuthResponseData>(
+    //         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey,
+    //         {
+    //             email: userEmail,
+    //             password: userPassword,
+    //             returnSecureToken: true
+    //         }
+    //     ).pipe(
+    //         catchError(this.handleError),
+    //         tap(responseData => {
+    //             this.handleAuthentication(
+    //                 responseData.email,
+    //                 responseData.localId,
+    //                 responseData.idToken,
+    //                 responseData.expiresIn
+    //             );
+    //         })
+    //     );
+    // }
 
     autoLogin() {
         const userData: {
@@ -88,7 +88,7 @@ export class AuthService {
 
         if(loadedUser.token) {
             // this.user.next(loadedUser);
-            this.store.dispatch(fromAuthActions.login({
+            this.store.dispatch(fromAuthActions.authenticateSuccess({
                 user: {
                     email: loadedUser.email,
                      id: loadedUser.id, 
@@ -104,7 +104,7 @@ export class AuthService {
     logout() {
         // this.user.next(null);
         this.store.dispatch(fromAuthActions.logout());
-        this.router.navigate(['/auth']);
+        //this.router.navigate(['/auth']);
         localStorage.removeItem('userData');
         if(this.tokenExpirationTimer) {
             clearTimeout(this.tokenExpirationTimer);
@@ -130,7 +130,7 @@ export class AuthService {
         );
         // this.user.next(user);
         this.store.dispatch(
-            fromAuthActions.login(
+            fromAuthActions.authenticateSuccess(
                 {user: {email: email, id: id, token: token, expirationDate: expirationDate}}
             )
         )
