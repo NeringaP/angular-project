@@ -5,7 +5,7 @@ import { HttpClient } from "@angular/common/http";
 
 import * as fromAuthActions from "./auth.actions";
 import { environment } from "src/environments/environment";
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { Router } from "@angular/router";
 import { User } from "../user.model";
 import { AuthService } from "../auth.service";
@@ -28,7 +28,8 @@ const handleAuthentication = (email: string, id: string, token: string, expiresI
                 email: email, 
                 id: id, 
                 token: token, 
-                expirationDate: expirationDate
+                expirationDate: expirationDate,
+                redirect: true
             }
         });
 };
@@ -143,7 +144,8 @@ export class AuthEffects {
                             email: loadedUser.email,
                              id: loadedUser.id, 
                              token: loadedUser.token, 
-                             expirationDate: new Date(userData._tokenExpirationDate)
+                             expirationDate: new Date(userData._tokenExpirationDate),
+                             redirect: false
                             }
                     });
                 }
@@ -168,8 +170,10 @@ export class AuthEffects {
         () => 
             this.actions$.pipe(
                 ofType(fromAuthActions.authenticateSuccess),
-                tap(() => {
-                    this.router.navigate(['/recipes']);
+                tap(authSuccessAction => {
+                    if(authSuccessAction.user.redirect) {
+                        this.router.navigate(['/recipes']);
+                    }                     
                 })
             ),
             {dispatch: false}
