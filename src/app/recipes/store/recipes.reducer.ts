@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { Recipe } from "../recipe.model";
-import { setRecipes } from "./recipes.actions";
+import { fetchRecipes, setRecipes } from "./recipes.actions";
 
 export interface State {
     recipes: Recipe[];
@@ -15,5 +15,6 @@ export const recipesReducer = createReducer(
     on(setRecipes, (state, action) =>({
         ...state,
         recipes: [...action.recipes]
-    }))
+    })),
+
 );
