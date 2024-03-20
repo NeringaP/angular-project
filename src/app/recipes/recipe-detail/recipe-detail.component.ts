@@ -5,6 +5,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { addIngredients } from 'src/app/shopping/shopping-list/store/shopping-list.actions';
 import * as fromApp from "../../store/app.reducer";
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -24,12 +25,23 @@ export class RecipeDetailComponent implements OnInit{
 
 ngOnInit() {
   this.route.params
-  .subscribe(
-    (params: Params) => {
-      this.id = +params['id'];
-      this.recipe = this.recipeService.getRecipe(this.id);
-    }
-  )
+    .pipe(
+      map(params => 
+        +params['id']
+      ),
+      switchMap(id => {
+        this.id = id;
+        return this.store.select('recipes');
+      }), 
+      map(recipesState => 
+        // recipesState.recipes.find((recipe, index) => 
+        //  index === this.id)
+        recipesState.recipes[this.id]
+      )
+    )
+    .subscribe(recipe => 
+      this.recipe = recipe
+    )
 }
 
   onAddToShoppingList() {

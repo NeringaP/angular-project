@@ -2,7 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import * as fromApp from 'src/app/store/app.reducer';
 
 @Component({
   selector: 'app-recipe-list',
@@ -12,18 +14,22 @@ import { Subscription } from 'rxjs';
 export class RecipeListComponent implements OnInit, OnDestroy{
   recipes: Recipe[];
   private recipesChagedSub: Subscription;
+  recipes$: Observable<{recipes: Recipe[]}>;
 
-  constructor(private recipeService: RecipeService,
+  constructor(
               private router: Router,
-              private route: ActivatedRoute) {}
+              private route: ActivatedRoute,
+              private store: Store<fromApp.AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.recipes = this.recipeService.getRecipes();
-    this.recipesChagedSub = this.recipeService.recipesChanged
-    .subscribe(
-      (recipes: Recipe[]) => {
-        this.recipes = recipes;
-      });
+    this.recipes$ = this.store.select('recipes');
+    // this.recipes = this.recipeService.getRecipes();
+    // this.recipesChagedSub = this.recipeService.recipesChanged
+    // .subscribe(
+    //   (recipes: Recipe[]) => {
+    //     this.recipes = recipes;
+    //   });
   }
 
   ngOnDestroy(): void {
